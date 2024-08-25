@@ -45,6 +45,7 @@ terminal BINARY_COUNT;
 terminal IDENTIFIER;
 terminal CONST_FLOAT;
 terminal CONST_INT;
+terminal CONST_STRING;
 
 // Non Terminals
 non terminal sentence;
@@ -65,5 +66,6 @@ term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
-factor ::= CONST_INT:constant {: System.out.println("Constant: " + constant ); :};
+factor ::= CONST_INT:constant {: System.out.println("Constant Int: " + constant ); :};
+factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};

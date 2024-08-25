@@ -86,8 +86,9 @@ Letter = [a-zA-Z]
 Digit = [0-9]
 ConstInt = {Digit}+
 ConstFloat = {Digit}{0,8}.{Dot}.{Digit}{1,8}
+ConstString = "\""({Letter}|{Digit}){1,40}"\""
 
-WhiteSpace = {LineTerminator} | {Identation}
+WhiteSpace = {LineTerminator} | {Identation} | {Space}
 Identifier = {Letter} ({Letter}|{Digit})*
 
 %%
@@ -101,6 +102,7 @@ Identifier = {Letter} ({Letter}|{Digit})*
   /* Constants */
   {ConstFloat}                        { return symbol(ParserSym.CONST_FLOAT, yytext()); }
   {ConstInt}                        { return symbol(ParserSym.CONST_INT, yytext()); }
+  {ConstString}                        { return symbol(ParserSym.CONST_STRING, yytext()); }
 
   /* operators */
 
@@ -127,7 +129,6 @@ Identifier = {Letter} ({Letter}|{Digit})*
   {Sub}                                     { return symbol(ParserSym.SUB); }
   {Mult}                                    { return symbol(ParserSym.MULT); }
   {Div}                                     { return symbol(ParserSym.DIV); }
-  {Space}                                   { return symbol(ParserSym.SPACE); }
   {OpenComment}                                   { return symbol(ParserSym.OPEN_COMMENT); }
   {CloseComment}                                   { return symbol(ParserSym.CLOSE_COMMENT); }
   {Comma}                                   { return symbol(ParserSym.COMMA); }
