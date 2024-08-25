@@ -84,7 +84,7 @@ BinaryCount = "binaryCount"
 
 Letter = [a-zA-Z]
 Digit = [0-9]
-ConstInt = {Digit}+
+ConstInt = {Digit}{0,16}
 ConstFloat = {Digit}{0,8}.{Dot}.{Digit}{1,8}
 ConstString = "\""({Letter}|{Digit}){1,40}"\""
 
