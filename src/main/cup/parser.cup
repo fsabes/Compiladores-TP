@@ -1,0 +1,69 @@
+package lyc.compiler;
+
+import java_cup.runtime.*;
+
+class Parser;
+
+
+// Terminals
+terminal WHILE;
+terminal IF;
+terminal ELSE;
+terminal INIT;
+terminal INT;
+terminal FLOAT;
+terminal STRING;
+terminal NOT;
+terminal AND;
+terminal OR;
+terminal WRITE;
+terminal READ;
+terminal OP_GREATER;
+terminal OP_LESSER;
+terminal OP_GREATER_EQUAL;
+terminal OP_LESSER_EQUAL;
+terminal OP_EQUAL;
+terminal OP_NOT_EQUAL;
+terminal OP_ASSIG;
+terminal PLUS;
+terminal SUB;
+terminal MULT;
+terminal DIV;
+terminal SPACE;
+terminal OPEN_COMMENT;
+terminal CLOSE_COMMENT;
+terminal COMMA;
+terminal DOT;
+terminal OPEN_KEY_BRACKET;
+terminal CLOSE_KEY_BRACKET;
+terminal OPEN_BRACKET;
+terminal CLOSE_BRACKET;
+terminal OPEN_SQUARE_BRACKET;
+terminal CLOSE_SQUARE_BRACKET;
+terminal TRIANGLE;
+terminal BINARY_COUNT;
+terminal IDENTIFIER;
+terminal CONST_FLOAT;
+terminal CONST_INT;
+
+// Non Terminals
+non terminal sentence;
+non terminal assignment;
+non terminal expression;
+non terminal term;
+non terminal factor;
+
+// Start Symbol Definition
+start with sentence;
+
+sentence ::= assignment {: System.out.println("End"); :};
+assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"); :};
+expression ::= expression PLUS term {: System.out.println("+"); :};
+expression ::= expression SUB term {: System.out.println("-"); :};
+expression ::= term {: System.out.println("Expression = Term"); :};
+term ::= term MULT factor {: System.out.println("*"); :};
+term ::= term DIV factor {: System.out.println("/"); :};
+term ::= factor {: System.out.println("Term = factor"); :};
+factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
+factor ::= CONST_INT:constant {: System.out.println("Constant: " + constant ); :};
+factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
