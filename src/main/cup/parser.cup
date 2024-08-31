@@ -68,4 +68,5 @@ term ::= factor {: System.out.println("Term = factor"); :};
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
 factor ::= CONST_INT:constant {: System.out.println("Constant Int: " + constant ); :};
 factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + constant ); :};
+factor ::= CONST_FLOAT:constant {: System.out.println("Constant Float: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
