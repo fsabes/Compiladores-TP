@@ -34,6 +34,7 @@ terminal OPEN_COMMENT;
 terminal CLOSE_COMMENT;
 terminal COMMA;
 terminal DOT;
+terminal COLON;
 terminal OPEN_KEY_BRACKET;
 terminal CLOSE_KEY_BRACKET;
 terminal OPEN_BRACKET;
@@ -51,6 +52,9 @@ terminal CONST_STRING;
 non terminal sentence;
 non terminal assignment;
 non terminal expression;
+non terminal expressionBrackets;
+non terminal expressionInit;
+non terminal clase;
 non terminal term;
 non terminal factor;
 
@@ -63,6 +67,7 @@ non terminal comparison;
 // Start Symbol Definition
 start with sentence;
 sentence ::= assignment {: System.out.println("End"); :};
+sentence ::= INIT expressionBrackets {: System.out.println("Assignment = ExpressionInit"); :};
 sentence ::= conditional {: System.out.println("conditional"); :};
 
 conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET  {: System.out.println("conditional"); :};
@@ -77,6 +82,11 @@ assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};
+
+expressionBrackets ::= OPEN_KEY_BRACKET expressionInit CLOSE_KEY_BRACKET {: System.out.println("expressionBrackets = {Expression}"); :};
+expressionInit ::= IDENTIFIER COLON clase{: System.out.println("Initialization Variable"); :};
+clase ::= STRING:clase {: System.out.println("Class: " + clase); :};
+
 term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};

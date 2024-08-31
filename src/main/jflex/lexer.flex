@@ -71,6 +71,7 @@ OpenComment = "/*"
 CloseComment = "*/"
 Comma = ","
 Dot = "."
+Colon = ":"
 
 OpenBracket = "("
 CloseBracket = ")"
@@ -82,6 +83,7 @@ CloseSquareBracket= "]"
 Triangle = "triangle"
 BinaryCount = "binaryCount"
 
+LetterLowerCase = [a-z]
 Letter = [a-zA-Z]
 Digit = [0-9]
 ConstInt = {Digit}{1,16}
@@ -89,7 +91,7 @@ ConstFloat = {Digit}{1,8}{Dot}{Digit}{1,8}
 ConstString = "\""({Letter}|{Digit}){1,40}"\""
 
 WhiteSpace = {LineTerminator} | {Identation} | {Space}
-Identifier = {Letter} ({Letter}|{Digit})*
+Identifier = {LetterLowerCase} ({Letter}|{Digit})*
 
 %%
 
@@ -101,6 +103,11 @@ Identifier = {Letter} ({Letter}|{Digit})*
   {If}                                      { return symbol(ParserSym.IF); }
   {Else}                                    { return symbol(ParserSym.ELSE); }
 
+  /* operators */
+  {While}                                   { return symbol(ParserSym.WHILE); }
+  {If}                                   { return symbol(ParserSym.IF); }
+  {Else}                                   { return symbol(ParserSym.ELSE); }
+  {Init}                                   { return symbol(ParserSym.INIT, yytext()); }
   /* identifiers */
   {Identifier}                              { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
@@ -114,7 +121,7 @@ Identifier = {Letter} ({Letter}|{Digit})*
   {Init}                                    { return symbol(ParserSym.INIT); }
   {Int}                                     { return symbol(ParserSym.INT); }
   {Float}                                   { return symbol(ParserSym.FLOAT); }
-  {String}                                  { return symbol(ParserSym.STRING); }
+  {String}                                  { return symbol(ParserSym.STRING, yytext()); }
   {Not}                                     { return symbol(ParserSym.NOT); }
   {And}                                     { return symbol(ParserSym.AND); }
   {Or}                                      { return symbol(ParserSym.OR); }
@@ -135,6 +142,7 @@ Identifier = {Letter} ({Letter}|{Digit})*
   {CloseComment}                            { return symbol(ParserSym.CLOSE_COMMENT); }
   {Comma}                                   { return symbol(ParserSym.COMMA); }
   {Dot}                                     { return symbol(ParserSym.DOT); }
+  {Colon}                                   { return symbol(ParserSym.COLON); }
   {OpenKeyBracket}                          { return symbol(ParserSym.OPEN_KEY_BRACKET); }
   {CloseKeyBracket}                         { return symbol(ParserSym.CLOSE_KEY_BRACKET); }
   {OpenBracket}                             { return symbol(ParserSym.OPEN_BRACKET); }
