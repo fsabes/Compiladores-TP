@@ -76,7 +76,7 @@ CloseBracket = ")"
 OpenKeyBracket = "{"
 CloseKeyBracket = "}"
 OpenSquareBracket = "["
-CloseSquareBracket= "]"
+CloseSquareBracket = "]"
 
 Triangle = "triangle"
 BinaryCount = "binaryCount"
@@ -101,18 +101,23 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
 
   {If}                                      { return symbol(ParserSym.IF); }
   {Else}                                    { return symbol(ParserSym.ELSE); }
+  {Triangle}                                { return symbol(ParserSym.TRIANGLE); }
+  {BinaryCount}                             { return symbol(ParserSym.BINARY_COUNT); }
+  {Write}                                   { return symbol(ParserSym.WRITE); }
+  {Read}                                    { return symbol(ParserSym.READ); }
 
   /* operators */
   {While}                                   { return symbol(ParserSym.WHILE); }
-  {If}                                   { return symbol(ParserSym.IF); }
-  {Else}                                   { return symbol(ParserSym.ELSE); }
-  {Init}                                   { return symbol(ParserSym.INIT, yytext()); }
+  {If}                                      { return symbol(ParserSym.IF); }
+  {Else}                                    { return symbol(ParserSym.ELSE); }
+  {Init}                                    { return symbol(ParserSym.INIT, yytext()); }
   /* identifiers */
-  {Identifier}                              { return symbol(ParserSym.IDENTIFIER, yytext()); }
+  {Identifier}                              { if(yylength() > MAX_LENGTH){ throw new InvalidLengthException(yytext()); } return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
+
   {ConstFloat}                              { return symbol(ParserSym.CONST_FLOAT, yytext()); }
   {ConstInt}                                { return symbol(ParserSym.CONST_INT, yytext()); }
-  {ConstString}                             { return symbol(ParserSym.CONST_STRING, yytext()); }
+  {ConstString}                             { if(yylength() > MAX_LENGTH){ throw new InvalidLengthException(yytext()); } return symbol(ParserSym.CONST_STRING, yytext()); }
   {Comment}                                 { return symbol(ParserSym.COMMENT); }
 
   /* operators */
@@ -125,8 +130,6 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   {Not}                                     { return symbol(ParserSym.NOT); }
   {And}                                     { return symbol(ParserSym.AND); }
   {Or}                                      { return symbol(ParserSym.OR); }
-  {Write}                                   { return symbol(ParserSym.WRITE); }
-  {Read}                                    { return symbol(ParserSym.READ); }
   {OpGreater}                               { return symbol(ParserSym.OP_GREATER); }
   {OpLesser}                                { return symbol(ParserSym.OP_LESSER); }
   {OpGreaterEqual}                          { return symbol(ParserSym.OP_GREATER_EQUAL); }
@@ -147,8 +150,6 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   {CloseBracket}                            { return symbol(ParserSym.CLOSE_BRACKET); }
   {OpenSquareBracket}                       { return symbol(ParserSym.OPEN_SQUARE_BRACKET); }
   {CloseSquareBracket}                      { return symbol(ParserSym.CLOSE_SQUARE_BRACKET); }
-  {Triangle}                                { return symbol(ParserSym.TRIANGLE); }
-  {BinaryCount}                             { return symbol(ParserSym.BINARY_COUNT); }
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }

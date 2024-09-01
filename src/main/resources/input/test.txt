@@ -1,8 +1,58 @@
-if(2==2){
-    a=2
-}else{a=2}
-while(a=2){
-    2=2
+init {
+  a, b : String
+  c : Float
+  b : Int
 }
-    
+
+read(q)
+write(a)
+
+binaryCount([1,3])
+binaryCount([1,3, x, q])
+binaryCount([1,3,4])
+binaryCount([1,3,0,4, 4])
+t = binaryCount([1,3,0,0,a,s,d])
+
+y = triangle(1,2,3)
+a = triangle(b,e,a)
+k = triangle(4/2,e,a)
+o = triangle(x, 1+1, x)
+x = triangle(0, 1/x, 0)
+d = triangle((32+5+x)*z, 1/x, 100)
+
+x = 27 - c
+x = r + 500
+x = 34 * 3
+x = z / f
+
+/* XD */
+if(2==3 && 4==5){
+    if(!(3==5)){
+      c=d*(e-21)/4
+    }
+} else {
+    c=d*(e-21)/4
+}
+if(2==3 && 4==5){
+    if(3==5){
+      c=d*(e-21)/4
+      write("HOLIS")
+    }
+} else {
+    c=d*(e-21)/4 /* XD */
+}
+while(2==2){
+/* XD */
+        c=d*(e-21)/4
+}
+while(2==2 && !(2==c)){
+/* XD */
+        c=d*(e-21)/4
+}
+if(a==3+3){
+ c=2
+ read(f)
+}
+/* XD */
+
 

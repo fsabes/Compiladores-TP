@@ -48,66 +48,113 @@ terminal CONST_FLOAT;
 terminal CONST_INT;
 terminal CONST_STRING;
 terminal COMMENT;
+terminal BINARY;
 
 // Non Terminals
 non terminal sentence;
 non terminal assignment;
 non terminal expression;
-non terminal expressionBrackets;
-non terminal expressionInit;
+non terminal declaration;
+non terminal variable;
+non terminal multipleVariable;
+non terminal variableList;
+non terminal declarationList;
 non terminal clase;
 non terminal term;
 non terminal factor;
 non terminal multiple_sentence;
-
+non terminal expressionConditional;
 non terminal conditional;
-non terminal multiple_condition;
+non terminal multipleCondition;
 non terminal condition;
 non terminal comparison;
 non terminal block;
-non terminal iterator;
+non terminal expressionIterator;
+non terminal expressionRead;
 non terminal content;
-non terminal input_write;
-non terminal write;
-non terminal read;
+non terminal inputWrite;
+non terminal expressionWrite;
 non terminal comment;
+non terminal expressionInit;
+non terminal multipleSentence;
+non terminal sentenceInit;
+non terminal expressionTriangle;
+non terminal expressionBinaryCount;
+non terminal elementList;
+non terminal element;
+non terminal inputRead;
 
 // Start Symbol Definition
-start with sentence;
-sentence ::= assignment {: System.out.println("End"); :};
-sentence ::= INIT expressionBrackets {: System.out.println("Assignment = ExpressionInit"); :};
-sentence ::= conditional {: System.out.println("conditional"); :};
-sentence ::= iterator {: System.out.println("iterator"); :};
-sentence ::= comment {: System.out.println("comment"); :};
+start with sentenceInit;
 
-conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("conditional"); :};
-conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block ELSE block {: System.out.println("conditional"); :};
-conditional ::= condition multiple_condition  {: System.out.println("conditional = condition multiple_condition"); :};
+/** FALTA ARREGLAR LOS PRINT **/
+
+sentenceInit ::= multipleSentence {: System.out.println("End"); :};
+multipleSentence ::= sentence multipleSentence {: System.out.println("End"); :};
+multipleSentence ::= sentence {: System.out.println("End"); :};
+sentence ::= expressionInit {: System.out.println("End"); :};
+sentence ::= assignment {: System.out.println("End"); :};
+sentence ::= expressionConditional {: System.out.println("expressionConditional"); :};
+sentence ::= expressionIterator {: System.out.println("expressionIterator"); :};
+sentence ::= comment {: System.out.println("comment"); :};
+sentence ::= expressionTriangle {: System.out.println("comment"); :};
+sentence ::= expressionBinaryCount {: System.out.println("comment"); :};
+sentence ::= expressionRead {: System.out.println("comment"); :};
+sentence ::= expressionWrite {: System.out.println("comment"); :};
+
+//IF
+expressionConditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("expressionConditional"); :};
+expressionConditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block ELSE block {: System.out.println("expressionConditional"); :};
+conditional ::= condition multipleCondition  {: System.out.println("expressionConditional = condition multipleCondition"); :};
 conditional ::= condition  {: System.out.println("condition"); :};
-multiple_condition ::= AND conditional  {: System.out.println("multiple_condition = AND conditional"); :};
-multiple_condition ::= OR conditional  {: System.out.println("multiple_condition OR conditional"); :};
+conditional ::= NOT OPEN_BRACKET conditional CLOSE_BRACKET  {: System.out.println("expressionConditional = condition multipleCondition"); :};
+multipleCondition ::= AND conditional  {: System.out.println("multipleCondition = AND expressionConditional"); :};
+multipleCondition ::= OR conditional  {: System.out.println("multipleCondition OR expressionConditional"); :};
 condition ::= expression comparison expression {: System.out.println("condition ::= expression comparison expression"); :};
 comparison ::=  OP_EQUAL | OP_NOT_EQUAL | OP_GREATER | OP_LESSER | OP_LESSER_EQUAL | OP_GREATER_EQUAL {: System.out.println("comparison"); :};
 
-block ::= OPEN_KEY_BRACKET multiple_sentence CLOSE_KEY_BRACKET {: System.out.println("block"); :};
-iterator ::= WHILE OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("iterator"); :};
+//INIT
+expressionInit ::= INIT OPEN_KEY_BRACKET declarationList CLOSE_KEY_BRACKET {: System.out.println("Assignment = declaration"); :};
+declarationList ::= declaration declarationList {: System.out.println("Assignment = declaration"); :};
+declarationList ::= declaration {: System.out.println("Assignment = declaration"); :};
+declaration ::= variableList COLON clase {: System.out.println("Assignment = declaration"); :};
+variableList ::= variable COMMA variableList {: System.out.println("Assignment = declaration"); :};
+variableList ::= variable {: System.out.println("Assignment = declaration"); :};
+variable ::= IDENTIFIER  {: System.out.println("Assignment = declaration"); :};
+clase ::= STRING:clase {: System.out.println("Class: " + clase); :};
+clase ::= FLOAT:clase {: System.out.println("Class: " + clase); :};
+clase ::= INT:clase {: System.out.println("Class: " + clase); :};
 
-content ::= assignment | conditional | expression | iterator | write | read | comment {: System.out.println("content"); :};
-multiple_sentence ::= multiple_sentence content {: System.out.println("Sentences"); :};
-multiple_sentence ::= content {: System.out.println("mult sent"); :};
+//TRIANGLE
+expressionTriangle ::= TRIANGLE OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET {: System.out.println("Class"); :};
+assignment ::= IDENTIFIER OP_ASSIG expressionTriangle {: System.out.println("Assignment"); :};
 
-read ::= READ OPEN_BRACKET factor CLOSE_BRACKET {: System.out.println("read"); :};
-write ::= WRITE OPEN_BRACKET input_write CLOSE_BRACKET {: System.out.println("read"); :};
+//BINARY COUNT
+expressionBinaryCount ::= BINARY_COUNT OPEN_BRACKET OPEN_SQUARE_BRACKET elementList CLOSE_SQUARE_BRACKET CLOSE_BRACKET {: System.out.println("Assignment"); :};
+elementList ::= elementList COMMA element {: System.out.println("Assignment"); :};
+elementList ::= element {: System.out.println("Assignment"); :};
+element ::= CONST_INT {: System.out.println("Assignment"); :};
+element ::= IDENTIFIER {: System.out.println("Assignment"); :};
+assignment ::= IDENTIFIER OP_ASSIG expressionBinaryCount {: System.out.println("Assignment"); :};
 
+// WHILE
+expressionIterator ::= WHILE OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("expressionIterator"); :};
+block ::= OPEN_KEY_BRACKET sentenceInit CLOSE_KEY_BRACKET {: System.out.println("block"); :};
+
+//READ
+expressionRead ::= READ OPEN_BRACKET inputRead CLOSE_BRACKET {: System.out.println("expressionRead"); :};
+inputRead ::= IDENTIFIER:id  {: System.out.println("Input expressionRead id: " +  id); :};
+
+//WRITE
+expressionWrite ::= WRITE OPEN_BRACKET inputWrite CLOSE_BRACKET {: System.out.println("write"); :};
+inputWrite ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :};
+inputWrite ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
+
+//ASSIGNMENT
 assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};
-
-expressionBrackets ::= OPEN_KEY_BRACKET expressionInit CLOSE_KEY_BRACKET {: System.out.println("expressionBrackets = {Expression}"); :};
-expressionInit ::= IDENTIFIER COLON clase{: System.out.println("Initialization Variable"); :};
-clase ::= STRING:clase {: System.out.println("Class: " + clase); :};
-
 term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
@@ -117,8 +164,5 @@ factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + con
 factor ::= CONST_FLOAT:constant {: System.out.println("Constant Float: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
 
-input_write ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :}; 
-input_write ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
-input_read ::= IDENTIFIER:id  {: System.out.println("Input read id: " +  id); :}; 
-
-comment ::= COMMENT {: System.out.println("Comment"); :}; 
+//COMMMENT
+comment ::= COMMENT {: System.out.println("Comment"); :};
