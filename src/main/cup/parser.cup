@@ -30,8 +30,8 @@ terminal SUB;
 terminal MULT;
 terminal DIV;
 terminal SPACE;
-terminal OPEN_COMMENT;
-terminal CLOSE_COMMENT;
+//terminal OPEN_COMMENT;
+//terminal CLOSE_COMMENT;
 terminal COMMA;
 terminal DOT;
 terminal COLON;
@@ -47,6 +47,7 @@ terminal IDENTIFIER;
 terminal CONST_FLOAT;
 terminal CONST_INT;
 terminal CONST_STRING;
+terminal COMMENT;
 
 // Non Terminals
 non terminal sentence;
@@ -57,26 +58,46 @@ non terminal expressionInit;
 non terminal clase;
 non terminal term;
 non terminal factor;
-
+non terminal multiple_sentence;
 
 non terminal conditional;
 non terminal multiple_condition;
 non terminal condition;
 non terminal comparison;
+non terminal block;
+non terminal iterator;
+non terminal content;
+non terminal input_write;
+non terminal write;
+non terminal read;
+non terminal comment;
 
 // Start Symbol Definition
 start with sentence;
 sentence ::= assignment {: System.out.println("End"); :};
 sentence ::= INIT expressionBrackets {: System.out.println("Assignment = ExpressionInit"); :};
 sentence ::= conditional {: System.out.println("conditional"); :};
+sentence ::= iterator {: System.out.println("iterator"); :};
+sentence ::= comment {: System.out.println("comment"); :};
 
-conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET  {: System.out.println("conditional"); :};
+conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("conditional"); :};
+conditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block ELSE block {: System.out.println("conditional"); :};
 conditional ::= condition multiple_condition  {: System.out.println("conditional = condition multiple_condition"); :};
 conditional ::= condition  {: System.out.println("condition"); :};
 multiple_condition ::= AND conditional  {: System.out.println("multiple_condition = AND conditional"); :};
 multiple_condition ::= OR conditional  {: System.out.println("multiple_condition OR conditional"); :};
 condition ::= expression comparison expression {: System.out.println("condition ::= expression comparison expression"); :};
 comparison ::=  OP_EQUAL | OP_NOT_EQUAL | OP_GREATER | OP_LESSER | OP_LESSER_EQUAL | OP_GREATER_EQUAL {: System.out.println("comparison"); :};
+
+block ::= OPEN_KEY_BRACKET multiple_sentence CLOSE_KEY_BRACKET {: System.out.println("block"); :};
+iterator ::= WHILE OPEN_BRACKET conditional CLOSE_BRACKET block {: System.out.println("iterator"); :};
+
+content ::= assignment | conditional | expression | iterator | write | read | comment {: System.out.println("content"); :};
+multiple_sentence ::= multiple_sentence content {: System.out.println("Sentences"); :};
+multiple_sentence ::= content {: System.out.println("mult sent"); :};
+
+read ::= READ OPEN_BRACKET factor CLOSE_BRACKET {: System.out.println("read"); :};
+write ::= WRITE OPEN_BRACKET input_write CLOSE_BRACKET {: System.out.println("read"); :};
 
 assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
@@ -95,3 +116,9 @@ factor ::= CONST_INT:constant {: System.out.println("Constant Int: " + constant 
 factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + constant ); :};
 factor ::= CONST_FLOAT:constant {: System.out.println("Constant Float: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
+
+input_write ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :}; 
+input_write ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
+input_read ::= IDENTIFIER:id  {: System.out.println("Input read id: " +  id); :}; 
+
+comment ::= COMMENT {: System.out.println("Comment"); :}; 

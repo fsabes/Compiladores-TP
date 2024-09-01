@@ -67,8 +67,6 @@ Sub = "-"
 Div = "/"
 
 Space = " "
-OpenComment = "/*"
-CloseComment = "*/"
 Comma = ","
 Dot = "."
 Colon = ":"
@@ -89,6 +87,7 @@ Digit = [0-9]
 ConstInt = {Digit}{1,16}
 ConstFloat = {Digit}{1,8}{Dot}{Digit}{1,8}
 ConstString = "\""({Letter}|{Digit}){1,40}"\""
+Comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
 
 WhiteSpace = {LineTerminator} | {Identation} | {Space}
 Identifier = {LetterLowerCase} ({Letter}|{Digit})*
@@ -114,6 +113,7 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   {ConstFloat}                              { return symbol(ParserSym.CONST_FLOAT, yytext()); }
   {ConstInt}                                { return symbol(ParserSym.CONST_INT, yytext()); }
   {ConstString}                             { return symbol(ParserSym.CONST_STRING, yytext()); }
+  {Comment}                                 { return symbol(ParserSym.COMMENT); }
 
   /* operators */
 
@@ -138,8 +138,6 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   {Sub}                                     { return symbol(ParserSym.SUB); }
   {Mult}                                    { return symbol(ParserSym.MULT); }
   {Div}                                     { return symbol(ParserSym.DIV); }
-  {OpenComment}                             { return symbol(ParserSym.OPEN_COMMENT); }
-  {CloseComment}                            { return symbol(ParserSym.CLOSE_COMMENT); }
   {Comma}                                   { return symbol(ParserSym.COMMA); }
   {Dot}                                     { return symbol(ParserSym.DOT); }
   {Colon}                                   { return symbol(ParserSym.COLON); }

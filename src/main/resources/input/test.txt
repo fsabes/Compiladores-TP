@@ -1,3 +1,8 @@
-init {
-    a: String
+if(2==2){
+    a=2
+}else{a=2}
+while(a=2){
+    2=2
 }
+    
+
