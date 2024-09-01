@@ -98,6 +98,7 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
 /* keywords */
 
 <YYINITIAL> {
+  {Comment}                                 { /* ignore */ }
 
   {If}                                      { return symbol(ParserSym.IF); }
   {Else}                                    { return symbol(ParserSym.ELSE); }
