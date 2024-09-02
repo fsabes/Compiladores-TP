@@ -4,7 +4,6 @@ import java_cup.runtime.*;
 
 class Parser;
 
-
 // Terminals
 terminal WHILE;
 terminal IF;
@@ -89,14 +88,14 @@ start with sentenceInit;
 
 /** FALTA ARREGLAR LOS PRINT **/
 
-sentenceInit ::= multipleSentence {: System.out.println("End"); :};
+sentenceInit ::= multipleSentence {:System.out.println("End"); :};
+sentenceInit ::= /* Empty */ {: System.out.println("End"); :};
 multipleSentence ::= sentence multipleSentence {: System.out.println("End"); :};
 multipleSentence ::= sentence {: System.out.println("End"); :};
 sentence ::= expressionInit {: System.out.println("End"); :};
 sentence ::= assignment {: System.out.println("End"); :};
 sentence ::= expressionConditional {: System.out.println("expressionConditional"); :};
 sentence ::= expressionIterator {: System.out.println("expressionIterator"); :};
-sentence ::= comment {: System.out.println("comment"); :};
 sentence ::= expressionTriangle {: System.out.println("comment"); :};
 sentence ::= expressionBinaryCount {: System.out.println("comment"); :};
 sentence ::= expressionRead {: System.out.println("comment"); :};
@@ -107,7 +106,7 @@ expressionConditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block {: Sys
 expressionConditional ::= IF OPEN_BRACKET conditional CLOSE_BRACKET block ELSE block {: System.out.println("expressionConditional"); :};
 conditional ::= condition multipleCondition  {: System.out.println("expressionConditional = condition multipleCondition"); :};
 conditional ::= condition  {: System.out.println("condition"); :};
-conditional ::= NOT OPEN_BRACKET conditional CLOSE_BRACKET  {: System.out.println("expressionConditional = condition multipleCondition"); :};
+conditional ::= NOT conditional  {: System.out.println("expressionConditional = condition multipleCondition"); :};
 multipleCondition ::= AND conditional  {: System.out.println("multipleCondition = AND expressionConditional"); :};
 multipleCondition ::= OR conditional  {: System.out.println("multipleCondition OR expressionConditional"); :};
 condition ::= expression comparison expression {: System.out.println("condition ::= expression comparison expression"); :};

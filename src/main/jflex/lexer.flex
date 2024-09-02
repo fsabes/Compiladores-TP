@@ -18,7 +18,6 @@ import static lyc.compiler.constants.Constants.*;
   return symbol(ParserSym.EOF);
 %eofval}
 
-
 %{
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
@@ -34,10 +33,10 @@ InputCharacter = [^\r\n]
 Identation =  [ \t\f]
 
 /* temas comunes */
-While = "while"
+While = "while" | "mientras"
 
-If = "if"
-Else = "else"
+If = "if"|"si"
+Else = "else"|"sino"
 
 Init = "init"
 
@@ -46,12 +45,12 @@ Int =  "Int"
 Float = "Float"
 String = "String"
 
-Not = "!"
-And = "&&"
-Or = "||"
+Not = "!" | NOT
+And = "&&" | AND
+Or = "||" | OR
 
-Write = "write"
-Read = "read"
+Write = "write"|"escribir"
+Read = "read"|"leer"
 
 OpGreater = ">"
 OpLesser= "<"
@@ -59,7 +58,7 @@ OpGreaterEqual = ">="
 OpLesserEqual = "<="
 OpEqual = "=="
 OpNotEqual = "!="
-OpAssig = "="
+OpAssig = "=" | ":="
 
 Plus = "+"
 Mult = "*"
@@ -77,6 +76,7 @@ OpenKeyBracket = "{"
 CloseKeyBracket = "}"
 OpenSquareBracket = "["
 CloseSquareBracket = "]"
+Comillas = "\"" | "“" | "”"
 
 Triangle = "triangle"
 BinaryCount = "binaryCount"
@@ -84,23 +84,22 @@ BinaryCount = "binaryCount"
 LetterLowerCase = [a-z]
 Letter = [a-zA-Z]
 Digit = [0-9]
-ConstInt = {Digit}{1,16}
-ConstFloat = {Digit}{1,8}{Dot}{Digit}{1,8}
-ConstString = "\""({Letter}|{Digit}){1,40}"\""
-Comment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+ConstInt = {Digit}+
+ConstFloat = {Digit}{1,8}{Dot}{Digit}{1,8} | {Digit}{1,8} +{Dot} | {Dot}{Digit}{1,8}+
+ConstString = {Comillas}([^*])*{Comillas}
+Comment = ("/*" [^*] ~"*/" | "/*" "*"+ "/") | ("*-" [^*] ~"-*" | "*-" "-"+ "*")
 
 WhiteSpace = {LineTerminator} | {Identation} | {Space}
 Identifier = {LetterLowerCase} ({Letter}|{Digit})*
 
 %%
 
-
 /* keywords */
 
 <YYINITIAL> {
   {Comment}                                 { /* ignore */ }
 
-  {If}                                      { return symbol(ParserSym.IF); }
+  {If}                                      {  return symbol(ParserSym.IF); }
   {Else}                                    { return symbol(ParserSym.ELSE); }
   {Triangle}                                { return symbol(ParserSym.TRIANGLE); }
   {BinaryCount}                             { return symbol(ParserSym.BINARY_COUNT); }
@@ -117,7 +116,16 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   /* Constants */
 
   {ConstFloat}                              { return symbol(ParserSym.CONST_FLOAT, yytext()); }
-  {ConstInt}                                { return symbol(ParserSym.CONST_INT, yytext()); }
+  {ConstInt}                                {
+          int value;
+                              try {
+                                  value = Integer.parseInt(yytext());
+                                  } catch (NumberFormatException e) {
+                                      throw new InvalidIntegerException(yytext());
+                                  }
+
+
+          if(value >= 65536) { throw new InvalidIntegerException(yytext()); } else {  return symbol(ParserSym.CONST_INT, yytext());} }
   {ConstString}                             { if(yylength() > MAX_LENGTH){ throw new InvalidLengthException(yytext()); } return symbol(ParserSym.CONST_STRING, yytext()); }
   {Comment}                                 { return symbol(ParserSym.COMMENT); }
 

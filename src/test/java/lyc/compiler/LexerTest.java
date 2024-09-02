@@ -18,7 +18,6 @@ import static lyc.compiler.constants.Constants.MAX_LENGTH;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@Disabled
 public class LexerTest {
 
   private Lexer lexer;
@@ -26,7 +25,7 @@ public class LexerTest {
 
   @Test
   public void comment() throws Exception{
-    scan("/*This is a comment*/");
+    scan("*-This is a comment-*");
     assertThat(nextToken()).isEqualTo(ParserSym.EOF);
   }
 
@@ -55,6 +54,7 @@ public class LexerTest {
   }
 
   @Test
+  @Disabled
   public void invalidNegativeIntegerConstantValue() {
     assertThrows(InvalidIntegerException.class, () -> {
       scan("%d".formatted(-9223372036854775807L));
@@ -62,6 +62,57 @@ public class LexerTest {
     });
   }
 
+  @Test
+  public void triangleWithExpressions() throws Exception {
+    scan("y=triangle(1,2,3)");
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.OP_ASSIG);
+    assertThat(nextToken()).isEqualTo(ParserSym.TRIANGLE);
+    assertThat(nextToken()).isEqualTo(ParserSym.OPEN_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.CLOSE_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.EOF);
+  }
+
+  @Test
+  public void triangleWithExpressionsOperation() throws Exception {
+    scan("k=triangle(4/2,e,a)");
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.OP_ASSIG);
+    assertThat(nextToken()).isEqualTo(ParserSym.TRIANGLE);
+    assertThat(nextToken()).isEqualTo(ParserSym.OPEN_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.DIV);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.CLOSE_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.EOF);
+  }
+
+  @Test
+  public void binaryWithExpressions() throws Exception {
+    scan("t=binaryCount([1,3,a])");
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.OP_ASSIG);
+    assertThat(nextToken()).isEqualTo(ParserSym.BINARY_COUNT);
+    assertThat(nextToken()).isEqualTo(ParserSym.OPEN_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.OPEN_SQUARE_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.CONST_INT);
+    assertThat(nextToken()).isEqualTo(ParserSym.COMMA);
+    assertThat(nextToken()).isEqualTo(ParserSym.IDENTIFIER);
+    assertThat(nextToken()).isEqualTo(ParserSym.CLOSE_SQUARE_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.CLOSE_BRACKET);
+    assertThat(nextToken()).isEqualTo(ParserSym.EOF);
+  }
 
   @Test
   public void assignmentWithExpressions() throws Exception {
