@@ -25,6 +25,10 @@ import static lyc.compiler.constants.Constants.*;
   private Symbol symbol(int type, Object value) {
     return new Symbol(type, yyline, yycolumn, value);
   }
+  private void addSymbol(String id, Object value) {  
+    SimbolRow simbolRow = new SimbolRow(id, value.toString(),"",0);
+    simbolTable.setSimbol(simbolRow);
+  }
 %}
 
 

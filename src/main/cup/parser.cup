@@ -3,6 +3,23 @@ package lyc.compiler;
 import java_cup.runtime.*;
 
 class Parser;
+action code
+{:
+    public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+    public ArrayList<String> identifiersList = new ArrayList();
+    public ArrayList<String> listAux = new ArrayList<String>();
+    public ArrayList<String> listStrings;
+    public ArrayList<String> listInt;
+    public ArrayList<String> listFloat;
+:}
+
+parser code
+{:
+    public List<SimbolRow> getListaSimbolos() {
+        return action_obj.simbolTable.getListaSimbolos();
+    }
+
+:}
 
 // Terminals
 terminal WHILE;
@@ -119,10 +136,10 @@ declarationList ::= declaration {: System.out.println("Assignment = declaration"
 declaration ::= variableList COLON clase {: System.out.println("Assignment = declaration"); :};
 variableList ::= variable COMMA variableList {: System.out.println("Assignment = declaration"); :};
 variableList ::= variable {: System.out.println("Assignment = declaration"); :};
-variable ::= IDENTIFIER  {: System.out.println("Assignment = declaration"); :};
-clase ::= STRING:clase {: System.out.println("Class: " + clase); :};
-clase ::= FLOAT:clase {: System.out.println("Class: " + clase); :};
-clase ::= INT:clase {: System.out.println("Class: " + clase); :};
+variable ::= IDENTIFIER:id  {: this.identifiersList.add(id.toString());listAux.add(id.toString());listAux.clear();System.out.println("Assignment = declaration"); :};
+clase ::= STRING:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listStrings  = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
+clase ::= FLOAT:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listFloat  = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
+clase ::= INT:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listInt = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
 
 //TRIANGLE
 expressionTriangle ::= TRIANGLE OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET {: System.out.println("Class"); :};

@@ -32,7 +32,8 @@ public final class Compiler {
             System.err.println("Compilation error: " + e.getMessage());
             System.exit(0);
         }
-
+        System.out.println("Tabla de Simbolos");
+        simbolTable.print();
         System.out.println("Compilation Successful");
 
     }
