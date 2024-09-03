@@ -15,7 +15,9 @@ public final class Compiler {
     private Compiler(){}
 
     public static void main(String[] args) {
+
         SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+        
         if (args.length != 1) {
             System.out.println("Filename must be provided as argument.");
             System.exit(0);
