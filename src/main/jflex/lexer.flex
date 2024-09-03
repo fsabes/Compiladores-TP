@@ -4,6 +4,8 @@ import java_cup.runtime.Symbol;
 import lyc.compiler.ParserSym;
 import lyc.compiler.model.*;
 import static lyc.compiler.constants.Constants.*;
+import lyc.compiler.simbolsTable.SimbolTable;
+import lyc.compiler.simbolsTable.SimbolRow;
 
 %%
 
@@ -17,6 +19,10 @@ import static lyc.compiler.constants.Constants.*;
 %eofval{
   return symbol(ParserSym.EOF);
 %eofval}
+
+%{ 
+  SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+%}
 
 %{
   private Symbol symbol(int type) {

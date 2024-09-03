@@ -1,6 +1,13 @@
 package lyc.compiler;
 
 import java_cup.runtime.*;
+import java.io.*;
+import java.util.*;
+
+import lyc.compiler.simbolsTable.SimbolTable;
+import lyc.compiler.simbolsTable.SimbolRow;
+import lyc.compiler.simbolsTable.DataType;
+import lyc.compiler.asm.*;
 
 class Parser;
 action code
@@ -136,10 +143,10 @@ declarationList ::= declaration {: System.out.println("Assignment = declaration"
 declaration ::= variableList COLON clase {: System.out.println("Assignment = declaration"); :};
 variableList ::= variable COMMA variableList {: System.out.println("Assignment = declaration"); :};
 variableList ::= variable {: System.out.println("Assignment = declaration"); :};
-variable ::= IDENTIFIER:id  {: this.identifiersList.add(id.toString());listAux.add(id.toString());listAux.clear();System.out.println("Assignment = declaration"); :};
-clase ::= STRING:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listStrings  = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
-clase ::= FLOAT:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listFloat  = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
-clase ::= INT:clase {:simbolTable.addIdentifiers(this.identifiersList, DataType.INT);listInt = new ArrayList<String>(listAux);listAux.clear(); System.out.println("Class: " + clase); :};
+variable ::= IDENTIFIER:id  {:System.out.println("Assignment = declaration"); :};
+clase ::= STRING {:System.out.println("Class: " + clase); :};
+clase ::= FLOAT {:System.out.println("Class: " + clase); :};
+clase ::= INT {:System.out.println("Class: " + clase); :};
 
 //TRIANGLE
 expressionTriangle ::= TRIANGLE OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET {: System.out.println("Class"); :};
@@ -167,7 +174,14 @@ inputWrite ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :
 inputWrite ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
 
 //ASSIGNMENT
-assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"); :};
+assignment ::= IDENTIFIER:id {:
+    if (!(listStrings.contains(id)||listFloat.contains(id)||listInt.contains(id)))
+    {
+        System.out.println("ERROR: QUIERE UTILIZAR  UNA VARIABLE QUE NO FUE ASIGNADA");
+        System.exit(-1);
+    }
+    :}
+    OP_ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};

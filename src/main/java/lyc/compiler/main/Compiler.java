@@ -1,19 +1,21 @@
 package lyc.compiler.main;
 
+import java.io.IOException;
+import java.io.Reader;
+
 import lyc.compiler.Parser;
 import lyc.compiler.factories.FileFactory;
 import lyc.compiler.factories.ParserFactory;
 import lyc.compiler.files.FileOutputWriter;
 import lyc.compiler.files.SymbolTableGenerator;
-
-import java.io.IOException;
-import java.io.Reader;
+import lyc.compiler.simbolsTable.SimbolTable;
 
 public final class Compiler {
 
     private Compiler(){}
 
     public static void main(String[] args) {
+        SimbolTable simbolTable = SimbolTable.getSingletonInstance();
         if (args.length != 1) {
             System.out.println("Filename must be provided as argument.");
             System.exit(0);

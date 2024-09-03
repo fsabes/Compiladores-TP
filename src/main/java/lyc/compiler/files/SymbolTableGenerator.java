@@ -10,6 +10,6 @@ public class SymbolTableGenerator implements FileGenerator{
     @Override
     public void generate(FileWriter fileWriter) throws IOException {
         SimbolTable simbolTable = SimbolTable.getSingletonInstance();
-        fileWriter.write("TODO");
-    }
+        fileWriter.write(simbolTable.toString());
+    }   
 }
