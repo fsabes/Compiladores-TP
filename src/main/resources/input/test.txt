@@ -1,7 +1,7 @@
 init {
   a, b : String
   c : Float
-  b : Int
+  d : Int
 }
 
 read(q)

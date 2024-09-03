@@ -17,6 +17,9 @@ action code
     public ArrayList<String> listStrings;
     public ArrayList<String> listInt;
     public ArrayList<String> listFloat;
+    public boolean isInt = false;
+    public boolean isFloat = false;
+    public boolean isString  = false;
 :}
 
 parser code
@@ -139,13 +142,38 @@ comparison ::=  OP_EQUAL | OP_NOT_EQUAL | OP_GREATER | OP_LESSER | OP_LESSER_EQU
 expressionInit ::= INIT OPEN_KEY_BRACKET declarationList CLOSE_KEY_BRACKET {: System.out.println("Assignment = declaration"); :};
 declarationList ::= declaration declarationList {: System.out.println("Assignment = declaration"); :};
 declarationList ::= declaration {: System.out.println("Assignment = declaration"); :};
-declaration ::= variableList COLON clase {: System.out.println("Assignment = declaration"); :};
+declaration ::= variableList COLON clase {:
+    if(isString){
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: STRING");
+        simbolTable.addIdentifiers(listAux, DataType.STRING);
+        listStrings = new ArrayList<String>(listAux);
+    }        
+    if (isFloat){
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: FLOAT");
+        simbolTable.addIdentifiers(listAux, DataType.FLOAT);
+        listFloat = new ArrayList<String>(listAux);
+    }
+    if (isInt){
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: INT");
+        simbolTable.addIdentifiers(listAux, DataType.INT);
+        listInt = new ArrayList<String>(listAux);
+    }
+    System.out.println("Assignment = declaration");
+    isString = false;
+    isInt = false;
+    isFloat = false; 
+    listAux.clear();
+:};
 variableList ::= variable COMMA variableList {: System.out.println("Assignment = declaration"); :};
 variableList ::= variable {: System.out.println("Assignment = declaration"); :};
-variable ::= IDENTIFIER:id  {:System.out.println("Assignment = declaration"); :};
-clase ::= STRING:clase {:System.out.println("Class: " + clase); :};
-clase ::= FLOAT:clase {:System.out.println("Class: " + clase); :};
-clase ::= INT:clase {:System.out.println("Class: " + clase); :};
+variable ::= IDENTIFIER:id  {:
+    this.identifiersList.add(id.toString());
+    listAux.add(id.toString());
+    System.out.println("Assignment = declaration Identifier: " + id); 
+:};
+clase ::= STRING {: isString = true; System.out.println("Class: STRING"); :};
+clase ::= FLOAT {: isFloat = true; System.out.println("Class: FLOAT"); :};
+clase ::= INT {: isInt = true; System.out.println("Class: INT"); :};
 
 //TRIANGLE
 expressionTriangle ::= TRIANGLE OPEN_BRACKET expression COMMA expression COMMA expression CLOSE_BRACKET {: System.out.println("Class"); :};
