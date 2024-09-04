@@ -2,6 +2,7 @@ package lyc.compiler.simbolsTable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class SimbolTable {
     ArrayList<SimbolRow> simbols;
@@ -68,38 +69,37 @@ public class SimbolTable {
   
   
   public Boolean isInTable(String nombre) {
-      return simbols.stream().anyMatch(symbol -> symbol.getNombre().equals(nombre));
+    return simbols.stream().anyMatch(symbol -> symbol.getNombre().equals(nombre));
   }
   
-    public void print() {
-      System.out.println(
-        String.format("%-20s%-20s%-20s%-20s\n", "NOMBRE", "TIPODATO", "VALOR", "LONGITUD"));
+  public void print() {
+    System.out.println(
+      String.format("%-20s%-20s%-20s%-20s\n", "NOMBRE", "TIPODATO", "VALOR", "LONGITUD")
+    );
       
-        for (SimbolRow row : simbols) {
-          System.out.println(
-          String.format("%-20s%-20s%-20s%-20s",
+    for (SimbolRow row : simbols) {
+      System.out.println(
+        String.format("%-20s%-20s%-20s%-20s",
           row.getNombre(),
           row.getId(),
           row.getValor(),
           row.getLongitud() == null? "" : row.getLongitud()
-          ));
-        }
+        )
+      );
     }
+  }
   
-    @Override
-    public String toString() {
-      String result = String.format("%-20s%-20s%-20s%-20s\n", "NOMBRE", "TIPODATO", "VALOR", "LONGITUD");
-      for (SimbolRow row : simbols) {
-        result += 
-        String.format("%-20s%-20s%-20s%-20s\n",
+  @Override
+  public String toString() {
+    String result = String.format("%-20s%-20s%-20s%-20s\n", "NOMBRE", "TIPODATO", "VALOR", "LONGITUD");
+    for (SimbolRow row : simbols) {
+      result += 
+      String.format("%-20s%-20s%-20s%-20s\n",
         row.getId(),
         row.getNombre(),
         row.getValor(), row.getLongitud() == null? "" : row.getLongitud()
-        );
-      }
-      return result;
+      );
     }
-  
-  
-  
-  }
+    return result;
+  }  
+}

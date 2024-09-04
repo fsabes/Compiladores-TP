@@ -1,9 +1,13 @@
 init {
   a, b : String
-  c : Float
-  d : Int
+  c,y,r,f : Float
+  d,e,k,x,z,o : Int
+  lo : String
 }
 
+a = 1.2
+d = 1.2
+b = "Hola Mundo"
 read(q)
 write(a)
 

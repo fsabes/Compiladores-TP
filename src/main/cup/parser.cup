@@ -14,9 +14,9 @@ action code
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
     public ArrayList<String> listAux = new ArrayList<String>();
-    public ArrayList<String> listStrings;
-    public ArrayList<String> listInt;
-    public ArrayList<String> listFloat;
+    public ArrayList<String> listStrings = new ArrayList();
+    public ArrayList<String> listInt = new ArrayList();
+    public ArrayList<String> listFloat = new ArrayList();
     public boolean isInt = false;
     public boolean isFloat = false;
     public boolean isString  = false;
@@ -143,20 +143,19 @@ expressionInit ::= INIT {: System.out.println("Comienza INIT"); :} OPEN_KEY_BRAC
 declarationList ::= declaration declarationList {: /*System.out.println("Assignment = declaration");*/ :};
 declarationList ::= declaration {: /* System.out.println("Assignment = declaration");*/ :};
 declaration ::= variableList COLON clase {:
+    ListIterator<String> iterador = listAux.listIterator();
     if(isString){
+        this.listStrings.addAll(listAux);
         System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: STRING");
         simbolTable.addIdentifiers(listAux, DataType.STRING);
-        listStrings = new ArrayList<String>(listAux);
     }        
     if (isFloat){
         System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: FLOAT");
         simbolTable.addIdentifiers(listAux, DataType.FLOAT);
-        listFloat = new ArrayList<String>(listAux);
     }
     if (isInt){
         System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: INT");
         simbolTable.addIdentifiers(listAux, DataType.INT);
-        listInt = new ArrayList<String>(listAux);
     }
     /*System.out.println("Assignment = declaration");*/
     isString = false;
@@ -167,6 +166,10 @@ declaration ::= variableList COLON clase {:
 variableList ::= variable COMMA variableList {: /*System.out.println("Assignment = declaration");*/ :};
 variableList ::= variable {: /*System.out.println("Assignment = declaration");*/ :};
 variable ::= IDENTIFIER:id  {:
+    if (this.identifiersList.contains(id) ){
+        System.out.println("ERROR: QUIERE UTILIZAR UNA VARIABLE QUE YA FUE DECLARADA " + id);
+        System.exit(-1);
+    }
     this.identifiersList.add(id.toString());
     listAux.add(id.toString());
     /*System.out.println("Assignment = declaration Identifier: " + id);*/ 
@@ -183,8 +186,11 @@ assignment ::= IDENTIFIER OP_ASSIG expressionTriangle {: System.out.println("Ass
 expressionBinaryCount ::= BINARY_COUNT OPEN_BRACKET OPEN_SQUARE_BRACKET elementList CLOSE_SQUARE_BRACKET CLOSE_BRACKET {: System.out.println("Assignment"); :};
 elementList ::= elementList COMMA element {: System.out.println("Assignment"); :};
 elementList ::= element {: System.out.println("Assignment"); :};
-element ::= CONST_INT {: System.out.println("Assignment"); :};
-element ::= IDENTIFIER {: System.out.println("Assignment"); :};
+element ::= CONST_INT:constant {: 
+    this.simbolTable.add("_"+constant,DataType.INT,constant.toString(), null);
+    System.out.println("Assignment"); 
+:};
+element ::= IDENTIFIER:id {: System.out.println("Assignment"); :};
 assignment ::= IDENTIFIER OP_ASSIG expressionBinaryCount {: System.out.println("Assignment"); :};
 
 // WHILE
@@ -193,15 +199,30 @@ block ::= OPEN_KEY_BRACKET sentenceInit CLOSE_KEY_BRACKET {: System.out.println(
 
 //READ
 expressionRead ::= READ OPEN_BRACKET inputRead CLOSE_BRACKET {: System.out.println("expressionRead"); :};
-inputRead ::= IDENTIFIER:id  {: System.out.println("Input expressionRead id: " +  id); :};
+inputRead ::= IDENTIFIER:id  {: 
+    if (! this.identifiersList.contains(id) ){
+        System.out.println("ERROR: QUIERE UTILIZAR UNA VARIABLE QUE NO FUE DECLARADA " + id);
+        System.exit(-1);
+    }
+    System.out.println("Input expressionRead id: " +  id); 
+:};
 
 //WRITE
 expressionWrite ::= WRITE OPEN_BRACKET inputWrite CLOSE_BRACKET {: System.out.println("write"); :};
-inputWrite ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :};
-inputWrite ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
+inputWrite ::= IDENTIFIER:id  {: 
+    if (! this.identifiersList.contains(id) ){
+        System.out.println("ERROR: QUIERE UTILIZAR UNA VARIABLE QUE NO FUE DECLARADA " + id);
+        System.exit(-1);
+    }
+    System.out.println("Input write id: " +  id); 
+:};
+inputWrite ::= CONST_STRING:constant {: 
+    this.simbolTable.add("_"+constant,DataType.STRING,constant.toString(), null);
+    System.out.println("Input write string:" + constant); 
+:};
 
 //ASSIGNMENT
-assignment ::= IDENTIFIER:id OP_ASSIG expression {: System.out.println("Assignment"); :};
+assignment ::= IDENTIFIER:id OP_ASSIG expression {: System.out.println("Assignment" + id); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
 expression ::= term {: System.out.println("Expression = Term"); :};
@@ -209,13 +230,26 @@ term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
 factor ::= IDENTIFIER:id  {: 
-    if (!(listStrings.contains(id)||listFloat.contains(id)||listInt.contains(id))){
-        System.out.println("ERROR: QUIERE UTILIZAR UNA VARIABLE QUE NO FUE DECLARADA");
+    if (! this.identifiersList.contains(id) ){
+        System.out.println("ERROR: QUIERE UTILIZAR UNA VARIABLE QUE NO FUE DECLARADA " + id);
+        System.exit(-1);
+    }
+    if(this.listStrings.contains(id)){
+        System.out.println("ERROR: TIPO DE DATO INVALIDO " + id);
         System.exit(-1);
     }
     System.out.println("Id: " + id); 
 :};
-factor ::= CONST_INT:constant {: System.out.println("Constant Int: " + constant ); :};
-factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + constant ); :};
-factor ::= CONST_FLOAT:constant {: System.out.println("Constant Float: " + constant ); :};
+factor ::= CONST_INT:constant {:
+    this.simbolTable.add("_"+constant,DataType.INT,constant.toString(), null);
+    System.out.println("Constant Int: " + constant ); 
+:};
+factor ::= CONST_STRING:constant {: 
+    this.simbolTable.add("_"+constant,DataType.STRING,constant.toString(), null);
+    System.out.println("Constant String: " + constant ); 
+:};
+factor ::= CONST_FLOAT:constant {: 
+    this.simbolTable.add("_"+constant,DataType.FLOAT,constant.toString(), null);
+    System.out.println("Constant Float: " + constant ); 
+:};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
