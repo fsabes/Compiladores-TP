@@ -54,10 +54,10 @@ public class LexerTest {
   }
 
   @Test
-  @Disabled
   public void invalidNegativeIntegerConstantValue() {
     assertThrows(InvalidIntegerException.class, () -> {
       scan("%d".formatted(-9223372036854775807L));
+      nextToken();
       nextToken();
     });
   }

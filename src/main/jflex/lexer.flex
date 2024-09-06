@@ -85,8 +85,8 @@ LetterLowerCase = [a-z]
 Letter = [a-zA-Z]
 Digit = [0-9]
 ConstInt = {Digit}+
-ConstFloat = {Digit}{1,8}{Dot}{Digit}{1,8} | {Digit}{1,8} +{Dot} | {Dot}{Digit}{1,8}+
-ConstString = {Comillas}([^*])*{Comillas}
+ConstFloat = {Digit}+{Dot}{Digit}+ | {Digit} +{Dot} | {Dot}{Digit}+
+ConstString = {Comillas} [^\"] ~{Comillas}
 Comment = ("/*" [^*] ~"*/" | "/*" "*"+ "/") | ("*-" [^*] ~"-*" | "*-" "-"+ "*")
 
 WhiteSpace = {LineTerminator} | {Identation} | {Space}
@@ -118,14 +118,17 @@ Identifier = {LetterLowerCase} ({Letter}|{Digit})*
   {ConstFloat}                              { return symbol(ParserSym.CONST_FLOAT, yytext()); }
   {ConstInt}                                {
           int value;
-                              try {
-                                  value = Integer.parseInt(yytext());
-                                  } catch (NumberFormatException e) {
-                                      throw new InvalidIntegerException(yytext());
-                                  }
-
-
-          if(value >= 65536) { throw new InvalidIntegerException(yytext()); } else {  return symbol(ParserSym.CONST_INT, yytext());} }
+          try {
+              value = Integer.parseInt(yytext());
+          } catch (NumberFormatException e) {
+              throw new InvalidIntegerException(yytext());
+          }
+          if(value >= 65536) {
+              throw new InvalidIntegerException(yytext());
+          } else {
+              return symbol(ParserSym.CONST_INT, yytext());
+          }
+      }
   {ConstString}                             { if(yylength() > MAX_LENGTH){ throw new InvalidLengthException(yytext()); } return symbol(ParserSym.CONST_STRING, yytext()); }
   {Comment}                                 { return symbol(ParserSym.COMMENT); }
 
