@@ -6,6 +6,8 @@ init {
   b : Int
 }
 
+a = "Soy una variable"
+
 /* READ */
 read(q)
 

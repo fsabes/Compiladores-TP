@@ -1,8 +1,34 @@
 package lyc.compiler;
 
 import java_cup.runtime.*;
+import java.io.*;
+import java.util.*;
+
+import lyc.compiler.simbolsTable.SimbolTable;
+import lyc.compiler.simbolsTable.SimbolRow;
+import lyc.compiler.simbolsTable.DataType;
 
 class Parser;
+
+action code
+{:
+    public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+    public ArrayList<String> identifiersList = new ArrayList();
+    public ArrayList<String> listAux = new ArrayList<String>();
+    public ArrayList<String> listStrings = new ArrayList();
+    public ArrayList<String> listInt = new ArrayList();
+    public ArrayList<String> listFloat = new ArrayList();
+    public boolean isInt = false;
+    public boolean isFloat = false;
+    public boolean isString  = false;
+:}
+
+parser code
+{:
+    public List<SimbolRow> getListaSimbolos() {
+        return action_obj.simbolTable.getListaSimbolos();
+    }
+:}
 
 // Terminals
 terminal WHILE;
@@ -110,10 +136,35 @@ comparison ::=  OP_EQUAL | OP_NOT_EQUAL | OP_GREATER | OP_LESSER | OP_LESSER_EQU
 expressionInit ::= INIT OPEN_KEY_BRACKET declarationList CLOSE_KEY_BRACKET {: System.out.println("expressionInit ::= INIT OPEN_KEY_BRACKET declarationList CLOSE_KEY_BRACKET"); :};
 declarationList ::= declaration declarationList {: System.out.println("declarationList ::= declaration declarationList"); :};
 declarationList ::= declaration {: System.out.println("declarationList ::= declaration"); :};
-declaration ::= variableList COLON clase {: System.out.println("declaration ::= variableList COLON clase "); :};
+declaration ::= variableList COLON clase {:
+ListIterator<String> iterador = listAux.listIterator();
+    if(isString){
+        this.listStrings.addAll(listAux);
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: STRING");
+        simbolTable.addIdentifiers(listAux, DataType.STRING);
+    }
+    if (isFloat){
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: FLOAT");
+        simbolTable.addIdentifiers(listAux, DataType.FLOAT);
+    }
+    if (isInt){
+        System.out.println("Lista de identificadores: " + listAux.toString() + " Tipo de dato: INT");
+        simbolTable.addIdentifiers(listAux, DataType.INT);
+    }
+    /*System.out.println("Assignment = declaration");*/
+    isString = false;
+    isInt = false;
+    isFloat = false;
+    listAux.clear();
+System.out.println("declaration ::= variableList COLON clase ");
+:};
 variableList ::= variable COMMA variableList {: System.out.println("variableList ::= variable COMMA variableList"); :};
 variableList ::= variable {: System.out.println("variableList ::= variable"); :};
-variable ::= IDENTIFIER  {: System.out.println("variable ::= IDENTIFIER"); :};
+variable ::= IDENTIFIER:id  {:
+    this.identifiersList.add(id.toString());
+    listAux.add(id.toString());
+ System.out.println("variable ::= IDENTIFIER");
+ :};
 clase ::= STRING:clase {: System.out.println("Class: " + clase); :};
 clase ::= FLOAT:clase {: System.out.println("Class: " + clase); :};
 clase ::= INT:clase {: System.out.println("Class: " + clase); :};
@@ -126,7 +177,10 @@ assignment ::= IDENTIFIER OP_ASSIG expressionTriangle {: System.out.println("ass
 expressionBinaryCount ::= BINARY_COUNT OPEN_BRACKET OPEN_SQUARE_BRACKET elementList CLOSE_SQUARE_BRACKET CLOSE_BRACKET {: System.out.println("expressionBinaryCount ::= BINARY_COUNT OPEN_BRACKET OPEN_SQUARE_BRACKET elementList CLOSE_SQUARE_BRACKET CLOSE_BRACKET"); :};
 elementList ::= elementList COMMA element {: System.out.println("elementList ::= elementList COMMA element"); :};
 elementList ::= element {: System.out.println("elementList ::= element"); :};
-element ::= CONST_INT {: System.out.println("element ::= CONST_INT"); :};
+element ::= CONST_INT:constant {:
+    this.simbolTable.add("_"+constant,DataType.INT,constant.toString(), null);
+    System.out.println("element ::= CONST_INT");
+:};
 element ::= IDENTIFIER {: System.out.println("element ::= IDENTIFIER"); :};
 assignment ::= IDENTIFIER OP_ASSIG expressionBinaryCount {: System.out.println("assignment ::= IDENTIFIER OP_ASSIG expressionBinaryCount"); :};
 
@@ -141,7 +195,10 @@ inputRead ::= IDENTIFIER:id  {: System.out.println("Input expressionRead id: " +
 //WRITE
 expressionWrite ::= WRITE OPEN_BRACKET inputWrite CLOSE_BRACKET {: System.out.println("expressionWrite ::= WRITE OPEN_BRACKET inputWrite CLOSE_BRACKET"); :};
 inputWrite ::= IDENTIFIER:id  {: System.out.println("Input write id: " +  id); :};
-inputWrite ::= CONST_STRING:constant {: System.out.println("Input write string:" + constant); :};
+inputWrite ::= CONST_STRING:constant {:
+    this.simbolTable.add("_"+constant,DataType.STRING,constant.toString(), null);
+    System.out.println("Input write string:" + constant);
+:};
 
 //ASSIGNMENT
 assignment ::= IDENTIFIER OP_ASSIG expression {: System.out.println("Assignment"); :};
@@ -152,7 +209,14 @@ term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
 factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
-factor ::= CONST_INT:constant {: System.out.println("Constant Int: " + constant ); :};
-factor ::= CONST_STRING:constant {: System.out.println("Constant String: " + constant ); :};
-factor ::= CONST_FLOAT:constant {: System.out.println("Constant Float: " + constant ); :};
+factor ::= CONST_INT:constant {:
+    this.simbolTable.add("_"+constant,DataType.INT,constant.toString(), null);
+    System.out.println("Constant Int: " + constant ); :};
+factor ::= CONST_STRING:constant {:
+    this.simbolTable.add("_"+constant,DataType.STRING,constant.toString(), null);
+    System.out.println("Constant String: " + constant );
+ :};
+factor ::= CONST_FLOAT:constant {:
+    this.simbolTable.add("_"+constant,DataType.FLOAT,constant.toString(), null);
+    System.out.println("Constant Float: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};

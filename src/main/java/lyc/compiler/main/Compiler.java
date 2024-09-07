@@ -5,6 +5,7 @@ import lyc.compiler.factories.FileFactory;
 import lyc.compiler.factories.ParserFactory;
 import lyc.compiler.files.FileOutputWriter;
 import lyc.compiler.files.SymbolTableGenerator;
+import lyc.compiler.simbolsTable.SimbolTable;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -14,6 +15,8 @@ public final class Compiler {
     private Compiler(){}
 
     public static void main(String[] args) {
+        SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+
         if (args.length != 1) {
             System.out.println("Filename must be provided as argument.");
             System.exit(0);
@@ -32,7 +35,8 @@ public final class Compiler {
             System.err.println("Compilation error: " + e.getMessage());
             System.exit(0);
         }
-
+        System.out.println("Tabla de Simbolos");
+        simbolTable.print();
         System.out.println("Compilation Successful");
 
     }
