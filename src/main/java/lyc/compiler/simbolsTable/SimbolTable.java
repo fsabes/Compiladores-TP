@@ -94,9 +94,10 @@ public class SimbolTable {
     for (SimbolRow row : simbols) {
       result += 
       String.format("%-20s%-20s%-20s%-20s\n",
-        row.getId(),
         row.getNombre(),
-        row.getValor(), row.getLongitud() == null? "" : row.getLongitud()
+        row.getId(),
+        row.getValor(),
+        row.getLongitud() == null? "" : row.getLongitud()
       );
     }
     return result;
